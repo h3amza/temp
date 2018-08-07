@@ -7,7 +7,7 @@ import pandas as pd
 import geopy.distance
 
 p =  re.compile("(\[null,null,)+\-?[0-9]+\.?[0-9]*(,)+\-?[0-9]+\.?[0-9]*(\])")
-q =  re.compile("[ ][0-9]{5}[,]")
+q =  re.compile("[ ][0-9]{5}")
 
 def extract(a,bit):
     if bit == 0:
@@ -26,7 +26,7 @@ def extract(a,bit):
             
             x = re.search(q,a).group(0)
             if x is not None:
-                return n +','+str(m[2])+','+str(m[3])+','+x.strip()[:-1]
+                return n +','+str(m[2])+','+str(m[3])+','+x.strip()
             else:
                 return n +','+str(m[2])+','+str(m[3])+','
         else:
