@@ -7,7 +7,7 @@ import pandas as pd
 import geopy.distance
 
 p =  re.compile("(\[null,null,)+\-?[0-9]+\.?[0-9]*(,)+\-?[0-9]+\.?[0-9]*(\])")
-q =  re.compile("[ ][0-9]{5}")
+q =  re.compile("['+'][0-9]{5}")
 
 
 def distSub(row):
@@ -40,9 +40,9 @@ def extract(a,bit):
             n = a[a.index(m)+len(m):a.index(m)+len(m)+100].split(',')[2].replace('\"','').replace('\\','')
             m = m.replace('[','').replace(']','').split(',')
             
-            x = re.search(q,a).group(0)
+            x = re.search(q,a)
             if x is not None:
-                return n +','+str(m[2])+','+str(m[3])+','+x.strip()
+                return n +','+str(m[2])+','+str(m[3])+','+x.group(0).strip()[1:]
             else:
                 return n +','+str(m[2])+','+str(m[3])+','
         else:
@@ -52,18 +52,15 @@ subj = pd.DataFrame(columns = ["guID", "subLat", "subLong", "school","schoolLat"
                 "groceryLat","groceryLong","recreation","recreationLat","recreationLong"])
 
 
-data = pd.read_csv('test', sep=",", header=None)
-data.columns = ["guID", "date", "val", "subLat","subLong","rank","compLat","compLong","latlong"]
+data = pd.read_csv('000002_0', sep=",", header=None)
+data.columns = ["guID", "date", "val", "subLat","subLong","rank","compLat","compLong"]
 
 data2 = pd.concat([data['guID'],data['subLat'],data['subLong']],axis=1,keys=['guID','subLat','subLong'])
 data2 =  data2.drop_duplicates('guID')
-print(data2)
-
 
 driver = webdriver.Chrome()
 i = 0
 for index,row in data2.iterrows():
-    print(i)
     # find school
     final =  row['guID']+','+str(row['subLat'])+','+str(row['subLong'])+','
     driver.get('https://www.google.com/maps/search/high+school/@'+str(row['subLat'])+','+str(row['subLong'])+',13z')
@@ -82,27 +79,22 @@ for index,row in data2.iterrows():
     a = driver.page_source
     final += extract(a,0)
     
-    #print(final)
+    print(i)
     #print(final,file=out)
     final = final.split(",")
-    print(final)
     subj.loc[len(subj)] = final
     i+=1
-    if i%50==0:
+    if i%1000==0:
+	print(i)
         subj.to_csv(r'subj'+str(i)+'.txt', header=None, index=None, sep=',', mode='a', encoding='utf-8')
 
 
 combined = pd.merge(data,subj,on='guID')
 
-distances = combined.drop('date',1). \
-            drop('val',1).drop('rank',1). \
+distances = combined.drop('val',1).drop('rank',1). \
             drop('subLat_y',1). \
-            drop('subLong_y',1). \
-            drop("school",1). \
-            drop("grocery",1).  \
-            drop("recreation",1)
-
-distances = combined
+            drop('subLong_y',1)
+#distances = combined
 
 distances['sub_distSchool'] = distances.apply(subDistSchool, axis=1)
 distances['sub_distGrocery'] = distances.apply(subDistGrocery, axis=1)
@@ -120,11 +112,10 @@ staging = distances.drop('schoolLat',1). \
             drop("recreationLat",1). \
             drop("recreationLong",1)
 
-staging = distances
+#staging = distances
 
-staging.to_csv(r'staging2.txt', header=None, index=None, sep=',', mode='a', encoding='utf-8')
+staging.to_csv(r'000002_0_info.txt', header=None, index=None, sep=',', mode='a', encoding='utf-8')
 
-out.close()
 driver.close()
 
 
