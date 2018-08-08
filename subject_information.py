@@ -27,16 +27,18 @@ def subDistRecreation(row):
 
 def extract(a,bit):
     if bit == 0:
-        m = re.search(p,a).group(0)
+        m = re.search(p,a)
         if m is not None:
+            m = m.group(0)
             n = a[a.index(m)+len(m):a.index(m)+len(m)+100].split(',')[2].replace('\"','').replace('\\','')
             m = m.replace('[','').replace(']','').split(',')
             return n +','+str(m[2])+','+str(m[3])
         else:
             return ",,"
     else:
-        m = re.search(p,a).group(0)
+        m = re.search(p,a)
         if m is not None:
+            m = m.group(0)
             n = a[a.index(m)+len(m):a.index(m)+len(m)+100].split(',')[2].replace('\"','').replace('\\','')
             m = m.replace('[','').replace(']','').split(',')
             
@@ -52,7 +54,7 @@ subj = pd.DataFrame(columns = ["guID", "subLat", "subLong", "school","schoolLat"
                 "groceryLat","groceryLong","recreation","recreationLat","recreationLong"])
 
 
-data = pd.read_csv('000002_0', sep=",", header=None)
+data = pd.read_csv('000002_1', sep=",", header=None)
 data.columns = ["guID", "date", "val", "subLat","subLong","rank","compLat","compLong"]
 
 data2 = pd.concat([data['guID'],data['subLat'],data['subLong']],axis=1,keys=['guID','subLat','subLong'])
