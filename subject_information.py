@@ -3,6 +3,7 @@ import re
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 import pandas as pd
 import geopy.distance
 
@@ -54,13 +55,17 @@ subj = pd.DataFrame(columns = ["guID", "subLat", "subLong", "school","schoolLat"
                 "groceryLat","groceryLong","recreation","recreationLat","recreationLong"])
 
 
-data = pd.read_csv('000002_1', sep=",", header=None)
+data = pd.read_csv('000001_1', sep=",", header=None)
 data.columns = ["guID", "date", "val", "subLat","subLong","rank","compLat","compLong"]
 
 data2 = pd.concat([data['guID'],data['subLat'],data['subLong']],axis=1,keys=['guID','subLat','subLong'])
 data2 =  data2.drop_duplicates('guID')
 
-driver = webdriver.Chrome()
+
+options = Options()
+options.set_headless(headless=True)
+
+driver = webdriver.Chrome(options=options)
 i = 0
 for index,row in data2.iterrows():
     # find school
@@ -116,7 +121,7 @@ staging = distances.drop('schoolLat',1). \
 
 #staging = distances
 
-staging.to_csv(r'000002_0_info.txt', header=None, index=None, sep=',', mode='a', encoding='utf-8')
+staging.to_csv(r'000001_0_info.txt', header=None, index=None, sep=',', mode='a', encoding='utf-8')
 
 driver.close()
 
