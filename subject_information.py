@@ -4,11 +4,17 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
+from pyvirtualdisplay import Display
 import pandas as pd
 import geopy.distance
 
+display = Display(visible=0,size=(800,800))
+display.start()
+
 p =  re.compile("(\[null,null,)+\-?[0-9]+\.?[0-9]*(,)+\-?[0-9]+\.?[0-9]*(\])")
 q =  re.compile("['+'][0-9]{5}")
+
+
 
 
 def distSub(row):
@@ -63,9 +69,10 @@ data2 =  data2.drop_duplicates('guID')
 
 
 options = Options()
-options.set_headless(headless=True)
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-setuid-sandbox")
 
-driver = webdriver.Chrome(options=options)
+driver = webdriver.Chrome(chrome_options=options)
 i = 0
 for index,row in data2.iterrows():
     # find school
