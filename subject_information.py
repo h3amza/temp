@@ -94,7 +94,7 @@ for index,row in data2.iterrows():
     final += extract(a,0)
     
     print(i)
-    #print(final,file=out)
+    #print(final)
     final = final.split(",")
     subj.loc[len(subj)] = final
     i+=1
