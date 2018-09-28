@@ -48,7 +48,7 @@ def extract(a):
 
 subj = pd.DataFrame(columns = ["guID", "subLat", "subLong", "zipcode","state","address","city"])
 
-data = pd.read_csv('0_1', sep=",", header=None)
+data = pd.read_csv('cali', sep=",", header=None)
 data.columns = ["guID", "date", "val", "subLat","subLong","rank","compLat","compLong"]
 
 data2 = pd.concat([data['guID'],data['subLat'],data['subLong']],axis=1,keys=['guID','subLat','subLong'])
@@ -56,25 +56,26 @@ data2 =  data2.drop_duplicates('guID')
 print(len(data2))
 
 options = Options()
-#options.add_argument("--no-sandbox")
-#options.add_argument("--disable-setuid-sandbox")
-
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-setuid-sandbox")
+options.add_argument("--disable-extensions")
+options.add_argument("disable-infobars")
 driver = webdriver.Chrome(chrome_options=options)
 i = 0
 for index,row in data2.iterrows():
-    # find school
+    link = 'https://www.mapdevelopers.com/what-is-my-zip-code.php?address='+str(row['subLat'])+'%2C'+str(row['subLong'])
     final =  str(row['guID'])+','+str(row['subLat'])+','+str(row['subLong'])+','
-    driver.get('https://www.mapdevelopers.com/what-is-my-zip-code.php?address='+str(row['subLat'])+'%2C'+str(row['subLong']))
+    driver.get(link)
     time.sleep(2)
     a = driver.page_source
     final += extract(a)
     
     print(i)
-    print(final)
+    #print(final)
     final = final.split(",")
     subj.loc[len(subj)] = final
     i+=1
-    if i%1000==0:
+    if i%500==0:
         print(i)
         subj.to_csv(r'subj'+str(i)+'.txt', header=None, index=None, sep=',', mode='a', encoding='utf-8')
 
@@ -85,7 +86,7 @@ distances = combined.drop('subLat_y',1). \
             drop('subLong_y',1)
 distances['distance'] = distances.apply(distSub, axis=1)
 
-distances.to_csv(r'0_1_info.txt', header=None, index=None, sep=',', mode='a', encoding='utf-8')
+distances.to_csv(r'0_7_info.txt', header=None, index=None, sep=',', mode='a', encoding='utf-8')
 
 
 
