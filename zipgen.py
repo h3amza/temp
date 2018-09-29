@@ -13,7 +13,7 @@ from selenium.common.exceptions import NoSuchFrameException
 from selenium.common.exceptions import NoAlertPresentException
 from selenium.common.exceptions import NoSuchWindowException
 from selenium.common.exceptions import StaleElementReferenceException
-from selenium.common.exceptions import SessionNotFoundException
+#from selenium.common.exceptions import SessionNotFoundException
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import WebDriverException
 
