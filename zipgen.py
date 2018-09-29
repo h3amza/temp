@@ -134,16 +134,10 @@ for index,row in data2.iterrows():
     except NoSuchWindowException:
         i+=1
         print("resetting driver, skipped "+str(skipped))
-        driver.close()
+        #driver.close()
         time.sleep(2)
         driver = webdriver.Chrome(chrome_options=options)
     except StaleElementReferenceException:
-        i+=1
-        print("resetting driver, skipped "+str(skipped))
-        driver.close()
-        time.sleep(2)
-        driver = webdriver.Chrome(chrome_options=options)
-    except SessionNotFoundException:
         i+=1
         print("resetting driver, skipped "+str(skipped))
         driver.close()
